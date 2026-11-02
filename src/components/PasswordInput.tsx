@@ -9,6 +9,7 @@ type Props = {
     placeholder?: string;
     hint?: string;
     error?: string;
+    onForgotPress?: () => void;
 };
 
 export default function PasswordInput({
@@ -18,15 +19,28 @@ export default function PasswordInput({
     placeholder = 'Enter your password',
     hint = '',
     error = '',
+    onForgotPress,
 }: Props) {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
         <View style={styles.container}>
-            <View>
-                <Text style={styles.label}>
-                    {label}
-                </Text>
+            <View style={styles.passwordLabel}>
+                <View>
+                    <Text style={styles.label}>
+                        {label}
+                    </Text>
+                </View>
+
+                {onForgotPress && (
+                    <View>
+                        <Pressable onPress={onForgotPress}>
+                            <Text style={styles.forgotPassword}>
+                                Forgot password?
+                            </Text>
+                        </Pressable>
+                    </View>
+                )}
             </View>
 
             <View
@@ -109,9 +123,21 @@ const styles = StyleSheet.create({
     container: {
         gap: 8,
     },
+    passwordLabel: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 8,
+    },
     label: {
         color: '#172B28',
         fontSize: 14,
+    },
+    forgotPassword: {
+        color: '#106B5C',
+        fontSize: 12,
+        fontWeight: '600',
     },
     passwordBox: {
         flexDirection: 'row',

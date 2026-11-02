@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     },
     Button2: {
         backgroundColor: '#FFFFFF',
-        borderColor: '#DCE5E1',
+        borderColor: '#000000',
     },
     Button3: {
         backgroundColor: 'transparent',

@@ -1,307 +1,152 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, Keyboard, Image } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
+import { StyleSheet, Text, View, Keyboard } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../App';
 
+import Logo from '../components/Logo';
+import AppInput from '../components/AppInput';
+import PasswordInput from '../components/PasswordInput';
+import AppButton from '../components/AppButton';
+
 type LoginNavigation = NativeStackNavigationProp<
-  RootStackParamList,
-  'Login'
+    RootStackParamList,
+    'Login'
 >;
 
 export default function Login() {
-  const navigation = useNavigation<LoginNavigation>();
+    const navigation = useNavigation<LoginNavigation>();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
-  function checkForm() {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError('Please enter a valid email address.');
-      return;
+    function checkForm() {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
+        if (password === '') {
+            setError('Please enter your password.');
+            return;
+        }
+
+        setError('');
+        Keyboard.dismiss();
     }
 
-    if (password === '') {
-      setError('Please enter your password.');
-      return;
-    }
-
-    setError('');
-    Keyboard.dismiss();
-  }
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.logo}>
-        <Image
-          source={require('../../assets/Logo.png')}
-          style={{ width: 32, height: 32, marginRight: 8 }}
-        />
-        <Text style={styles.logoname}>
-          HealthMate
-        </Text>
-      </View>
-
-      <View style={styles.headingView}>
-        <Text style={styles.heading}>
-          Welcome back
-        </Text>
-      </View>
-
-      <View style={styles.descriptionView}>
-        <Text style={styles.description}>
-          Log in to pick up where you left off.
-        </Text>
-      </View>
-
-      {error !== '' && (
-        <View>
-          <Text style={styles.error}>
-            {error}
-          </Text>
-        </View>
-      )}
-
-      <View style={styles.form}>
-        <View style={styles.emailView}>
-          <View>
-            <Text style={styles.label}>
-              Email address
-            </Text>
-          </View>
-
-          <View>
-            <TextInput
-              style={styles.emailInput}
-              placeholder="praveen@example.com"
-              placeholderTextColor="#697875"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-          </View>
-        </View>
-
-        <View style={styles.passwordView}>
-          <View style={styles.passwordLabel}>
+    return (
+        <View style={styles.container}>
             <View>
-              <Text style={styles.label}>
-                Password
-              </Text>
+                <Logo />
             </View>
 
-            <View>
-              <Pressable
-                onPress={() => navigation.navigate('ForgotPassword')}
-              >
-                <Text style={styles.forgotPassword}>
-                  Forgot password?
+            <View style={styles.heading1}>
+                <Text style={styles.heading}>
+                    Welcome back
                 </Text>
-              </Pressable>
             </View>
-          </View>
 
-          <View style={styles.passwordBox}>
-            <TextInput
-              style={styles.passwordInput}
-              placeholder="Enter your password"
-              placeholderTextColor="#697875"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!showPassword}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+            <View style={styles.heading2}>
+                <Text style={styles.heading2Text}>
+                    Log in to pick up where you left off.
+                </Text>
+            </View>
 
-            <Pressable
-              style={
-                showPassword
-                  ? styles.unshowbutton
-                  : styles.showbutton
-              }
-              onPress={() => setShowPassword(!showPassword)}
-            >
-              <Svg width={24} height={24} viewBox="0 0 24 24">
-                <Path
-                  d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"
-                  fill="none"
-                  stroke="#172B28"
-                  strokeWidth={1.8}
-                />
+            {error !== '' && (
+                <View>
+                    <Text style={styles.error}>
+                        {error}
+                    </Text>
+                </View>
+            )}
 
-                <Circle
-                  cx={12}
-                  cy={12}
-                  r={3}
-                  fill="none"
-                  stroke="#172B28"
-                  strokeWidth={1.8}
-                />
+            <View style={styles.form}>
+                <View style={styles.emailView}>
+                    <AppInput
+                        label="Email address"
+                        value={email}
+                        onChangeText={setEmail}
+                        placeholder="example@gmail.com"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
+                </View>
 
-                {showPassword && (
-                  <Path
-                    d="M4 4L20 20"
-                    stroke="#172B28"
-                    strokeWidth={1.8}
-                  />
-                )}
-              </Svg>
-            </Pressable>
-          </View>
+                <View style={styles.passwordView}>
+                    <PasswordInput
+                        label="Password"
+                        value={password}
+                        onChangeText={setPassword}
+                        placeholder="Enter your password"
+                        onForgotPress={() => {
+                            Keyboard.dismiss();
+                            setError(
+                                'Password recovery will be added later.'
+                            );
+                        }}
+                    />
+                </View>
+            </View>
+
+            <View style={styles.buttonsView}>
+                <View>
+                    <AppButton
+                        title="Log in"
+                        onPress={checkForm}
+                    />
+                </View>
+
+                <View>
+                    <AppButton
+                        title="Create an account"
+                        variant="outline"
+                        onPress={() => navigation.navigate('Register')}
+                    />
+                </View>
+            </View>
         </View>
-      </View>
-
-      <View style={styles.buttonsView}>
-        <View>
-          <Pressable
-            style={styles.Button1}
-            onPress={checkForm}
-          >
-            <Text style={styles.ButtonText1}>
-              Log in
-            </Text>
-          </Pressable>
-        </View>
-
-        <View>
-          <Pressable
-            style={styles.Button2}
-            onPress={() => navigation.navigate('Register')}
-          >
-            <Text style={styles.ButtonText2}>
-              Create an account
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-    </View>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 24,
-    gap: 20,
-  },
-  logo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoname: {
-    color: '#123E35',
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  headingView: {
-    marginTop: 4,
-  },
-  heading: {
-    color: '#172B28',
-    fontSize: 28,
-    fontWeight: '600',
-  },
-  descriptionView: {
-    marginBottom: 4,
-  },
-  description: {
-    color: '#697875',
-    fontSize: 14,
-  },
-  form: {
-    marginTop: 32,
-    gap: 24,
-  },
-  emailView: {
-    gap: 8,
-  },
-  passwordView: {
-    gap: 8,
-  },
-  passwordLabel: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  label: {
-    color: '#172B28',
-    fontSize: 14,
-  },
-  emailInput: {
-    height: 56,
-    backgroundColor: '#F3F7F5',
-    borderColor: '#E3EAE7',
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    color: '#172B28',
-    fontSize: 16,
-  },
-  passwordBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    height: 56,
-    backgroundColor: '#F3F7F5',
-    borderColor: '#E3EAE7',
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingRight: 6,
-  },
-  passwordInput: {
-    flex: 1,
-    height: 54,
-    paddingHorizontal: 14,
-    color: '#172B28',
-    fontSize: 16,
-  },
-  showbutton: {
-    padding: 10,
-  },
-  unshowbutton: {
-    padding: 10,
-  },
-  forgotPassword: {
-    color: '#106B5C',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  buttonsView: {
-    gap: 20,
-  },
-  Button1: {
-    backgroundColor: '#123E35',
-    height: 56,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ButtonText1: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  Button2: {
-    backgroundColor: '#fff',
-    height: 56,
-    borderRadius: 16,
-    borderColor: '#E3EAE7',
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ButtonText2: {
-    color: '#106B5C',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  error: {
-    color: '#B42318',
-    fontSize: 14,
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        padding: 24,
+        gap: 20,
+    },
+    heading1: {
+        marginTop: 4,
+    },
+    heading: {
+        color: '#172B28',
+        fontSize: 28,
+        fontWeight: '600',
+    },
+    heading2: {
+        marginBottom: 4,
+    },
+    heading2Text: {
+        color: '#697875',
+        fontSize: 14,
+    },
+    form: {
+        marginTop: 32,
+        gap: 24,
+    },
+    emailView: {
+        gap: 8,
+    },
+    passwordView: {
+        gap: 8,
+    },
+    buttonsView: {
+        gap: 20,
+    },
+    error: {
+        color: '#B42318',
+        fontSize: 14,
+    },
 });
