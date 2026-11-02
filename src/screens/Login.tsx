@@ -97,9 +97,7 @@ export default function Login() {
 
             <View>
               <Pressable
-                onPress={() => {
-                  setError('Password recovery is not available yet.');
-                }}
+                onPress={() => navigation.navigate('ForgotPassword')}
               >
                 <Text style={styles.forgotPassword}>
                   Forgot password?
