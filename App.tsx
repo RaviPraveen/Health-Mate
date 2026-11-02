@@ -1,42 +1,42 @@
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { setupDatabase } from './src/database/database';
+import WelcomeScreen from './src/screens/WelcomeScreen';
+import LoginScreen from './src/screens/Login';
+import RegisterScreen from './src/screens/Register';
+
+export type RootStackParamList = {
+    Welcome: undefined;
+    Login: undefined;
+    Register: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  const [msg, setMsg] = useState('Connecting...');
+    return (
+        <SafeAreaProvider>
+            <NavigationContainer>
+                <Stack.Navigator
+                    initialRouteName="Welcome"
+                    screenOptions={{ headerShown: false }}
+                >
+                    <Stack.Screen
+                        name="Welcome"
+                        component={WelcomeScreen}
+                    />
 
-  useEffect(() => {
-    setupDatabase()
-      .then(() => {
-        setMsg('Database Connected Successfully');
-      })
-      .catch(() => {
-        setMsg('Database Connection Failed');
-      });
-  }, []);
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>HealthMate</Text>
-      <Text>{msg}</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+                    <Stack.Screen
+                        name="Login"
+                        component={LoginScreen}
+                    />
+                    <Stack.Screen
+                        name="Register"
+                        component={RegisterScreen}
+                    />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </SafeAreaProvider>
+    );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#168C76',
-    marginBottom: 15,
-  },
-});
