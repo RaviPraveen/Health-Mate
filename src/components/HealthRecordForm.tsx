@@ -1,32 +1,10 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import AppInput from './AppInput';
 
-type Props = {
-    date: string;
-    steps: string;
-    calories: string;
-    water: string;
-    onDatePress: () => void;
-    onStepsChange: (text: string) => void;
-    onCaloriesChange: (text: string) => void;
-    onWaterChange: (text: string) => void;
-    stepsError?: string;
-    caloriesError?: string;
-    waterError?: string;
+type Props = {date: string;steps: string; calories: string; water: string; onDatePress: () => void; onStepsChange: (text: string) => void; onCaloriesChange: (text: string) => void; onWaterChange: (text: string) => void;  stepsError?: string; caloriesError?: string;  waterError?: string;
 };
 
-export default function HealthRecordForm({
-    date,
-    steps,
-    calories,
-    water,
-    onDatePress,
-    onStepsChange,
-    onCaloriesChange,
-    onWaterChange,
-    stepsError = '',
-    caloriesError = '',
-    waterError = '',
+export default function HealthRecordForm({date,steps,calories,water,onDatePress,onStepsChange,onCaloriesChange,onWaterChange, stepsError = '',caloriesError = '',waterError = '',
 }: Props) {
     return (
         <View style={styles.form}>

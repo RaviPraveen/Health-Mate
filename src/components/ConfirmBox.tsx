@@ -1,22 +1,10 @@
 import { StyleSheet, Text, View, Modal } from 'react-native';
 import AppButton from './AppButton';
 
-type Props = {
-    visible: boolean;
-    title: string;
-    message?: string;
-    confirmTitle: string;
-    onConfirm: () => void;
-    onCancel: () => void;
+type Props = {visible: boolean;title: string;message?: string;confirmTitle: string;onConfirm: () => void; onCancel: () => void;
 };
 
-export default function ConfirmBox({
-    visible,
-    title,
-    message = '',
-    confirmTitle,
-    onConfirm,
-    onCancel,
+export default function ConfirmBox({visible,title,message = '',confirmTitle,onConfirm,onCancel,
 }: Props) {
     return (
         <Modal

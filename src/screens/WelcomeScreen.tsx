@@ -41,15 +41,7 @@ export default function WelcomeScreen() {
             <View>
                 <AppButton
                     title="Get Started"
-                    onPress={() => navigation.navigate('Register')}
-                />
-            </View>
-
-            <View>
-                <AppButton
-                    title="I already have an account"
-                    variant="outline"
-                    onPress={() => navigation.navigate('Login')}
+                    onPress={() => navigation.replace('Home')}
                 />
             </View>
         </View>

@@ -1,19 +1,11 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 
 type Props = {
-    date: string;
-    steps: number;
-    calories: number;
-    water: number;
-    onPress: () => void;
+    date: string;steps: number;  calories: number;  water: number; onPress: () => void;
 };
 
 export default function RecordCard({
-    date,
-    steps,
-    calories,
-    water,
-    onPress,
+    date,  steps,  calories,  water,  onPress,
 }: Props) {
     return (
         <Pressable

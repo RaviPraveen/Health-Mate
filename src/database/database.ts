@@ -1,24 +1,28 @@
 import * as SQLite from 'expo-sqlite';
 
-export async function setupDatabase() {
+let database: Promise<SQLite.SQLiteDatabase> | null = null;
+
+export function setupDatabase() {
+    if (!database) {
+        database = createDatabase().catch((error) => {
+            database = null;
+            throw error;
+        });
+    }
+
+    return database;
+}
+
+async function createDatabase() {
     const db = await SQLite.openDatabaseAsync('healthmate.db');
 
     await db.execAsync(`
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL COLLATE NOCASE UNIQUE,
-            password_hash TEXT NOT NULL,
-            photo_uri TEXT,
-            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-
         CREATE TABLE IF NOT EXISTS health_records (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER PRIMARY KEY,
             date TEXT NOT NULL,
-            steps INTEGER NOT NULL DEFAULT 0,
-            calories INTEGER NOT NULL DEFAULT 0,
-            water INTEGER NOT NULL DEFAULT 0
+            steps INTEGER NOT NULL,
+            calories INTEGER NOT NULL,
+            water INTEGER NOT NULL
         );
     `);
 

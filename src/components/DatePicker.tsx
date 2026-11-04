@@ -2,20 +2,10 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Pressable, Modal } from 'react-native';
 import AppButton from './AppButton';
 
-type Props = {
-    visible: boolean;
-    value: string;
-    onSelect: (date: string) => void;
-    onClose: () => void;
-    onClear?: () => void;
+type Props = {  visible: boolean;  value: string; onSelect: (date: string) => void; onClose: () => void; onClear?: () => void;
 };
 
-export default function DatePicker({
-    visible,
-    value,
-    onSelect,
-    onClose,
-    onClear,
+export default function DatePicker({  visible, value,onSelect, onClose,  onClear,
 }: Props) {
     const today = new Date();
 

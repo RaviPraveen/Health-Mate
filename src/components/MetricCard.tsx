@@ -1,24 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { ReactNode } from 'react';
 
-type Props = {
-    title: string;
-    value: number;
-    unit: string;
-    message?: string;
-    color: string;
-    backgroundColor: string;
-    icon?: ReactNode;
+type Props = {title: string;value: number; unit: string;message?: string; color: string; backgroundColor: string;  icon?: ReactNode;
 };
 
-export default function MetricCard({
-    title,
-    value,
-    unit,
-    message = '',
-    color,
-    backgroundColor,
-    icon,
+export default function MetricCard({title,value,unit,message = '',color,backgroundColor, icon,
 }: Props) {
     return (
         <View style={[styles.card, { backgroundColor }]}>

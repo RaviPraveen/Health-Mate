@@ -3,15 +3,11 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {
-    message: string;
-    type?: 'success' | 'error';
-    onFinish: () => void;
+    message: string; type?: 'success' | 'error';  onFinish: () => void;
 };
 
 export default function TopMessage({
-    message,
-    type = 'success',
-    onFinish,
+    message,  type = 'success', onFinish,
 }: Props) {
     const insets = useSafeAreaInsets();
     const finish = useRef(onFinish);

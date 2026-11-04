@@ -2,15 +2,11 @@ import { StyleSheet, Text, View, Pressable } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 type Props = {
-    title: string;
-    description?: string;
-    onBack?: () => void;
+    title: string;description?: string;  onBack?: () => void;
 };
 
 export default function PageHeader({
-    title,
-    description = '',
-    onBack,
+    title,description = '', onBack,
 }: Props) {
     return (
         <View style={styles.container}>

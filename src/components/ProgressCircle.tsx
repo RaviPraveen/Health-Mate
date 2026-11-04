@@ -2,27 +2,11 @@ import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
 type Props = {
-    value: number;
-    goal: number;
-    size?: number;
-    color?: string;
-    trackColor?: string;
-    textColor?: string;
-    showValue?: boolean;
-    label?: string;
-    unit?: string;
+    value: number;goal: number; size?: number; color?: string; trackColor?: string;textColor?: string; showValue?: boolean;label?: string; unit?: string;
 };
 
 export default function ProgressCircle({
-    value,
-    goal,
-    size = 100,
-    color = '#009B77',
-    trackColor = '#DAF3A0',
-    textColor = '#FFFFFF',
-    showValue = false,
-    label = '',
-    unit = '',
+    value,goal, size = 100, color = '#009B77', trackColor = '#DAF3A0', textColor = '#FFFFFF',showValue = false,label = '',  unit = '',
 }: Props) {
     const progress = goal > 0
         ? Math.min(100, Math.max(0, (value / goal) * 100))

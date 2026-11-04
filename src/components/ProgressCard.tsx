@@ -2,15 +2,10 @@ import { StyleSheet, Text, View } from 'react-native';
 import ProgressCircle from './ProgressCircle';
 
 type Props = {
-    steps: number;
-    goal: number;
-    date: string;
+    steps: number;goal: number;date: string;
 };
 
-export default function ProgressCard({
-    steps,
-    goal,
-    date,
+export default function ProgressCard({ steps, goal, date,
 }: Props) {
     const remaining = Math.max(goal - steps, 0);
 

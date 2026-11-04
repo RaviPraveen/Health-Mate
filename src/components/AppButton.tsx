@@ -7,11 +7,7 @@ type Props = {
     disabled?: boolean;
 };
 
-export default function AppButton({
-    title,
-    onPress,
-    variant = 'primary',
-    disabled = false,
+export default function AppButton({title,onPress,variant = 'primary',disabled = false,
 }: Props) {
     return (
         <Pressable

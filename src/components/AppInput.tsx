@@ -13,16 +13,7 @@ type Props = {
     error?: string;
 };
 
-export default function AppInput({
-    label,
-    value,
-    onChangeText,
-    placeholder = '',
-    keyboardType = 'default',
-    autoCapitalize = 'none',
-    editable = true,
-    hint = '',
-    error = '',
+export default function AppInput({label,value,onChangeText,placeholder = '',keyboardType = 'default',autoCapitalize = 'none',editable = true,hint = '',error = '',
 }: Props) {
     return (
         <View style={styles.container}>
