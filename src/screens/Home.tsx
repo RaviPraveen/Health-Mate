@@ -186,6 +186,7 @@ export default function Home({ navigation }: Props) {
             <NavBar
                 active="Home"
                 onHome={() => setRetry(retry + 1)}
+                onHistory={() => navigation.navigate('History')}
             />
         </View>
     );
@@ -193,43 +194,43 @@ export default function Home({ navigation }: Props) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
+        flex:1,
+        backgroundColor:'#FFFFFF',
     },
     page: {
         flex: 1,
-        paddingHorizontal: 20,
-        paddingBottom: 20,
-        gap: 20,
+        paddingHorizontal:20,
+        paddingBottom:20,
+        gap:20,
     },
     headingView: {
-        gap: 4,
+        gap:4,
     },
     heading: {
-        fontSize: 26,
-        lineHeight: 34,
-        fontWeight: '600',
+        fontSize:26,
+        lineHeight:34,
+        fontWeight:'600',
         color: '#172B28',
     },
     date: {
-        fontSize: 14,
-        lineHeight: 20,
-        color: '#697875',
+        fontSize:14,
+        lineHeight:20,
+        color:'#697875',
     },
     description: {
-        fontSize: 16,
-        color: '#697875',
+        fontSize:16,
+        color:'#697875',
     },
     content: {
-        gap: 24,
+        gap:24,
     },
     cardsView: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 12,
+        flexDirection:'row',
+        flexWrap:'wrap',
+        gap:12,
     },
     error: {
-        color: '#B42318',
-        fontSize: 14,
+        color:'#B42318',
+        fontSize:14,
     },
 });

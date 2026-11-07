@@ -1,11 +1,35 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import AppInput from './AppInput';
 
-type Props = {date: string;steps: string; calories: string; water: string; onDatePress: () => void; onStepsChange: (text: string) => void; onCaloriesChange: (text: string) => void; onWaterChange: (text: string) => void;  stepsError?: string; caloriesError?: string;  waterError?: string;
+type Props = {
+    date: string;
+    steps: string;
+    calories: string;
+    water: string;
+    onDatePress?: () => void;
+    onStepsChange: (text: string) => void;
+    onCaloriesChange: (text: string) => void;
+    onWaterChange: (text: string) => void;
+    stepsError?: string;
+    caloriesError?: string;
+    waterError?: string;
 };
 
-export default function HealthRecordForm({date,steps,calories,water,onDatePress,onStepsChange,onCaloriesChange,onWaterChange, stepsError = '',caloriesError = '',waterError = '',
+export default function HealthRecordForm({
+    date,
+    steps,
+    calories,
+    water,
+    onDatePress,
+    onStepsChange,
+    onCaloriesChange,
+    onWaterChange,
+    stepsError = '',
+    caloriesError = '',
+    waterError = '',
 }: Props) {
+    const dateText = <Text style={styles.dateText}>{date}</Text>;
+
     return (
         <View style={styles.form}>
             <View style={styles.dateView}>
@@ -15,15 +39,17 @@ export default function HealthRecordForm({date,steps,calories,water,onDatePress,
                     </Text>
                 </View>
 
-                <Pressable
-                    style={styles.dateInput}
-                    onPress={onDatePress}
-                    accessibilityRole="button"
-                >
-                    <Text style={styles.dateText}>
-                        {date}
-                    </Text>
-                </Pressable>
+                {onDatePress ? (
+                    <Pressable
+                        style={styles.dateInput}
+                        onPress={onDatePress}
+                        accessibilityRole="button"
+                    >
+                        {dateText}
+                    </Pressable>
+                ) : (
+                    <View style={styles.dateInput}>{dateText}</View>
+                )}
             </View>
 
             <View>
@@ -70,32 +96,32 @@ export default function HealthRecordForm({date,steps,calories,water,onDatePress,
 
 const styles = StyleSheet.create({
     form: {
-        gap: 20,
+        gap:20,
     },
     dateView: {
-        gap: 8,
+        gap:8,
     },
     label: {
-        color: '#172B28',
-        fontSize: 14,
+        color:'#172B28',
+        fontSize:14,
     },
     dateInput: {
         minHeight: 50,
-        backgroundColor: '#F3F7F5',
-        borderColor: '#E3EAE7',
-        borderWidth: 1,
-        borderRadius: 12,
-        paddingHorizontal: 14,
-        paddingVertical: 12,
-        justifyContent: 'center',
+        backgroundColor:'#F3F7F5',
+        borderColor:'#E3EAE7',
+        borderWidth:1,
+        borderRadius:12,
+        paddingHorizontal:14,
+        paddingVertical:12,
+        justifyContent:'center',
     },
     dateText: {
-        color: '#172B28',
-        fontSize: 16,
+        color:'#172B28',
+        fontSize:16,
     },
     hint: {
-        color: '#697875',
-        fontSize: 12,
-        lineHeight: 18,
+        color:'#697875',
+        fontSize:12,
+        lineHeight:18,
     },
 });

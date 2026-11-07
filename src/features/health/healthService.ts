@@ -103,3 +103,63 @@ export async function saveHealthRecord(
         }
     });
 }
+
+export async function getHealthRecords() {
+    const db = await setupDatabase();
+
+    return db.getAllAsync<HealthRecord>(
+        `SELECT id, date, steps, calories, water
+         FROM health_records
+         ORDER BY date DESC, id DESC`
+    );
+}
+
+export async function getHealthRecordById(id: number) {
+    const db = await setupDatabase();
+
+    return db.getFirstAsync<HealthRecord>(
+        `SELECT id, date, steps, calories, water
+         FROM health_records
+         WHERE id = ?`,
+        id
+    );
+}
+
+export async function updateHealthRecord(
+    id: number,
+    steps: string,
+    calories: string,
+    water: string
+) {
+    const stepsValue = readNumber(steps, 'Steps');
+    const caloriesValue = readNumber(calories, 'Calories');
+    const waterValue = readNumber(water, 'Water');
+
+    const db = await setupDatabase();
+
+    const result = await db.runAsync(
+        `UPDATE health_records
+         SET steps = ?, calories = ?, water = ?
+         WHERE id = ?`,
+        stepsValue,
+        caloriesValue,
+        waterValue,
+        id
+    );
+
+    if (result.changes === 0) {
+        throw new Error('This record could not be found.');
+    }
+}
+
+export async function deleteHealthRecord(id: number) {
+    const db = await setupDatabase();
+    const result = await db.runAsync(
+        'DELETE FROM health_records WHERE id = ?',
+        id
+    );
+
+    if (result.changes === 0) {
+        throw new Error('This record could not be found.');
+    }
+}

@@ -6,11 +6,17 @@ import { setupDatabase } from './src/database/database';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import HomeScreen from './src/screens/Home';
 import AddRecordScreen from './src/screens/AddRecord';
+import HistoryScreen from './src/screens/History';
+import DailyRecordScreen from './src/screens/DailyRecord';
+import EditRecordScreen from './src/screens/EditRecord';
 
 export type RootStackParamList = {
     Welcome: undefined;
     Home: undefined;
     AddRecord: undefined;
+    History: undefined;
+    DailyRecord: { id: number };
+    EditRecord: { id: number };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -41,11 +47,15 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={HomeScreen}
+          
           />
           <Stack.Screen
             name="AddRecord"
             component={AddRecordScreen}
           />
+          <Stack.Screen name="History" component={HistoryScreen} />
+          <Stack.Screen name="DailyRecord" component={DailyRecordScreen} />
+          <Stack.Screen name="EditRecord" component={EditRecordScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
