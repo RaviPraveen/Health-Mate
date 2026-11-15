@@ -31,15 +31,17 @@ export default function ConfirmBox({visible,title,message = '',confirmTitle,onCo
 
                     <View style={styles.buttons}>
                         <AppButton
-                            title={confirmTitle}
-                            variant="delete"
-                            onPress={onConfirm}
+                            title="Cancel"
+                            variant="redText"
+                            onPress={onCancel}
+                            height={48}
                         />
 
                         <AppButton
-                            title="Cancel"
-                            variant="text"
-                            onPress={onCancel}
+                            title={confirmTitle}
+                            variant="delete"
+                            onPress={onConfirm}
+                            height={48}
                         />
                     </View>
                 </View>
@@ -51,14 +53,15 @@ export default function ConfirmBox({visible,title,message = '',confirmTitle,onCo
 const styles = StyleSheet.create({
     background: {
         flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        backgroundColor: 'rgba(23, 43, 40, 0.4)',
         padding: 24,
         justifyContent: 'center',
         alignItems: 'center',
     },
     box: {
         width: '100%',
-        maxWidth: 420,
+        maxWidth: 340,
+        minHeight: 268,
         backgroundColor: '#FFFFFF',
         borderRadius: 20,
         padding: 24,
@@ -66,16 +69,16 @@ const styles = StyleSheet.create({
     },
     title: {
         color: '#172B28',
-        fontSize: 22,
+        fontSize: 20,
+        lineHeight: 28,
         fontWeight: '600',
     },
     message: {
         color: '#697875',
         fontSize: 14,
-        lineHeight: 21,
+        lineHeight: 20,
     },
     buttons: {
-        gap: 8,
-        marginTop: 8,
+        gap: 16,
     },
 });

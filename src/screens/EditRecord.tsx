@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Keyboard, StyleSheet, Text, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { usePreventRemove } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,6 +13,7 @@ import TopMessage from '../components/TopMessage';
 import {
     getHealthRecordById,
     updateHealthRecord,
+    getHealthRecordErrors,
 } from '../features/health/healthService';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'EditRecord'>;
@@ -28,11 +29,18 @@ export default function EditRecord({ navigation, route }: Props) {
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const [saving, setSaving] = useState(false);
+    const [showErrors, setShowErrors] = useState(false);
+    const [retry, setRetry] = useState(0);
+    const errors = getHealthRecordErrors(steps, calories, water);
+    const invalid = errors.steps !== '' || errors.calories !== '' || errors.water !== '';
 
     usePreventRemove(saving, () => {});
 
     useEffect(() => {
         let active = true;
+        setDate('');
+        setError('');
+        setShowErrors(false);
 
         async function loadRecord() {
             try {
@@ -63,7 +71,7 @@ export default function EditRecord({ navigation, route }: Props) {
         return () => {
             active = false;
         };
-    }, [id]);
+    }, [id, retry]);
 
     async function saveChanges() {
         if (date === '' || saving || message !== '') {
@@ -72,6 +80,12 @@ export default function EditRecord({ navigation, route }: Props) {
 
         Keyboard.dismiss();
         setError('');
+        setShowErrors(true);
+
+        if (invalid) {
+            return;
+        }
+
         setSaving(true);
 
         try {
@@ -89,66 +103,83 @@ export default function EditRecord({ navigation, route }: Props) {
     }
 
     return (
-        <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
-            <View>
-                <PageHeader
-                    title="Edit health record"
-                    description="One record per day. All values are daily totals."
-                    onBack={() => navigation.goBack()}
-                />
-            </View>
-
-            {error !== '' && (
-                <Text style={styles.error}>{error}</Text>
-            )}
-
-            {date === '' && error === '' && (
-                <Text>Loading record...</Text>
-            )}
-
-            {date !== '' && (
-                <View style={styles.content}>
-                    <View pointerEvents={saving || message !== '' ? 'none' : 'auto'}>
-                        <HealthRecordForm
-                            date={new Date(`${date}T12:00:00`).toLocaleDateString(
-                                'en-GB',
-                                { day: 'numeric', month: 'long', year: 'numeric' }
-                            )}
-                            steps={steps}
-                            calories={calories}
-                            water={water}
-                            onStepsChange={setSteps}
-                            onCaloriesChange={setCalories}
-                            onWaterChange={setWater}
-                        />
-                    </View>
-
-                    <View style={styles.buttons}>
-                        <View>
-                            <AppButton
-                                title={saving ? 'Saving...' : 'Save changes'}
-                                onPress={saveChanges}
-                                disabled={saving || message !== ''}
-                            />
-                        </View>
-
-                        <View>
-                            <AppButton
-                                title="Cancel"
-                                variant="text"
-                                onPress={() => navigation.goBack()}
-                                disabled={saving || message !== ''}
-                            />
-                        </View>
-                    </View>
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+            <ScrollView
+                contentContainerStyle={[
+                    styles.page,
+                    { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 20 },
+                ]}
+                keyboardShouldPersistTaps="handled"
+            >
+                <View>
+                    <PageHeader
+                        title="Edit health record"
+                        description="One record per day. All values are daily totals."
+                        onBack={() => navigation.goBack()}
+                    />
                 </View>
-            )}
+
+                {error !== '' && (
+                    <Text style={styles.error}>{error}</Text>
+                )}
+
+                {date === '' && error === '' && (
+                    <Text style={styles.loading}>Loading record...</Text>
+                )}
+                {date === '' && error !== '' && (
+                    <AppButton title="Retry loading" onPress={() => setRetry(retry + 1)} />
+                )}
+
+                {date !== '' && (
+                    <View style={styles.content}>
+                        <View pointerEvents={saving || message !== '' ? 'none' : 'auto'}>
+                            <HealthRecordForm
+                                date={new Date(`${date}T12:00:00`).toLocaleDateString(
+                                    'en-GB',
+                                    { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }
+                                )}
+                                steps={steps}
+                                calories={calories}
+                                water={water}
+                                onStepsChange={setSteps}
+                                onCaloriesChange={setCalories}
+                                onWaterChange={setWater}
+                                stepsError={showErrors ? errors.steps : ''}
+                                caloriesError={showErrors ? errors.calories : ''}
+                                waterError={showErrors ? errors.water : ''}
+                            />
+                        </View>
+
+                        <View style={styles.buttons}>
+                            <View>
+                                <AppButton
+                                    title={saving ? 'Saving...' : 'Save changes'}
+                                    onPress={saveChanges}
+                                    disabled={saving || message !== '' || (showErrors && invalid)}
+                                />
+                            </View>
+
+                            <View>
+                                <AppButton
+                                    title="Cancel"
+                                    variant="redText"
+                                    onPress={() => navigation.goBack()}
+                                    disabled={saving || message !== ''}
+                                />
+                            </View>
+                        </View>
+                    </View>
+                )}
+            </ScrollView>
 
             <TopMessage
                 message={message}
                 onFinish={() => navigation.goBack()}
             />
-        </View>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -156,6 +187,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FFFFFF',
+    },
+    page: {
         paddingHorizontal: 20,
         gap: 20,
     },
@@ -167,5 +200,10 @@ const styles = StyleSheet.create({
     },
     error: {
         color: '#B42318',
+    },
+    loading: {
+        color: '#697875',
+        fontSize: 14,
+        lineHeight: 20,
     },
 });

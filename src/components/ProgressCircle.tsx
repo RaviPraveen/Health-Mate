@@ -12,7 +12,8 @@ export default function ProgressCircle({
         ? Math.min(100, Math.max(0, (value / goal) * 100))
         : 0;
 
-    const circumference = 2 * Math.PI * 44;
+    const radius = 46.5;
+    const circumference = 2 * Math.PI * radius;
 
     return (
         <View style={styles.container}>
@@ -25,7 +26,7 @@ export default function ProgressCircle({
                     <Circle
                         cx={50}
                         cy={50}
-                        r={44}
+                        r={radius}
                         stroke={trackColor}
                         strokeWidth={7}
                         fill="none"
@@ -34,9 +35,10 @@ export default function ProgressCircle({
                     <Circle
                         cx={50}
                         cy={50}
-                        r={44}
+                        r={radius}
                         stroke={color}
                         strokeWidth={7}
+                        strokeLinecap={showValue ? 'round' : 'butt'}
                         fill="none"
                         strokeDasharray={[
                             circumference,
@@ -52,11 +54,13 @@ export default function ProgressCircle({
 
                 <View style={styles.circleText}>
                     <Text
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
                         style={[
                             styles.number,
                             {
                                 color: textColor,
-                                fontSize: size * 0.22,
+                                fontSize: showValue ? size * 0.20 : 24,
                             },
                         ]}
                     >
@@ -69,7 +73,7 @@ export default function ProgressCircle({
                         <Text
                             style={[
                                 styles.complete,
-                                { color: textColor },
+                                { color: trackColor },
                             ]}
                         >
                             complete
@@ -111,19 +115,22 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     complete: {
-        fontSize: 11,
+        fontSize: 10,
+        lineHeight: 14,
     },
     labelView: {
         alignItems: 'center',
         gap: 4,
     },
     label: {
-        color: '#172B28',
-        fontSize: 13,
+        color: '#697875',
+        fontSize: 14,
+        lineHeight: 20,
     },
     target: {
         color: '#697875',
-        fontSize: 10,
+        fontSize: 11,
+        lineHeight: 16,
         textAlign: 'center',
     },
 });

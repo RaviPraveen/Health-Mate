@@ -24,6 +24,13 @@ async function createDatabase() {
             calories INTEGER NOT NULL,
             water INTEGER NOT NULL
         );
+
+        CREATE TABLE IF NOT EXISTS daily_goals (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            steps INTEGER NOT NULL CHECK (steps > 0),
+            calories INTEGER NOT NULL CHECK (calories > 0),
+            water INTEGER NOT NULL CHECK (water > 0)
+        );
     `);
 
     return db;

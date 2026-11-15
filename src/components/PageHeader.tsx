@@ -1,16 +1,16 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
 
 type Props = {
     title: string;description?: string;  onBack?: () => void;
+    titleSize?: number;
 };
 
 export default function PageHeader({
-    title,description = '', onBack,
+    title,description = '', onBack, titleSize,
 }: Props) {
     return (
         <View style={styles.container}>
-            <View style={styles.headingView}>
+            <View style={[styles.headingView, onBack && styles.backHeading]}>
                 {onBack && (
                     <Pressable
                         style={styles.backButton}
@@ -18,21 +18,19 @@ export default function PageHeader({
                         accessibilityRole="button"
                         accessibilityLabel="Go back"
                     >
-                        <Svg width={24} height={24} viewBox="0 0 24 24">
-                            <Path
-                                d="M14 6L8 12L14 18"
-                                fill="none"
-                                stroke="#172B28"
-                                strokeWidth={2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </Svg>
+                        <Image
+                            source={require('../../assets/back.png')}
+                            style={styles.backIcon}
+                        />
                     </Pressable>
                 )}
 
                 <View style={styles.titleView}>
-                    <Text style={styles.title}>
+                    <Text style={[
+                        styles.title,
+                        !onBack && styles.pageTitle,
+                        titleSize !== undefined && { fontSize: titleSize },
+                    ]}>
                         {title}
                     </Text>
                 </View>
@@ -51,18 +49,23 @@ export default function PageHeader({
 
 const styles = StyleSheet.create({
     container: {
-        gap: 16,
+        gap: 20,
     },
     headingView: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12,
+        gap: 8,
     },
     backButton: {
-        minWidth: 44,
-        minHeight: 44,
+        minWidth: 48,
+        minHeight: 48,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    backIcon: {
+        width: 8,
+        height: 14,
+        resizeMode: 'contain',
     },
     titleView: {
         flex: 1,
@@ -70,11 +73,19 @@ const styles = StyleSheet.create({
     title: {
         color: '#172B28',
         fontSize: 22,
+        lineHeight: 30,
         fontWeight: '600',
     },
     description: {
         color: '#697875',
         fontSize: 14,
-        lineHeight: 21,
+        lineHeight: 20,
+    },
+    pageTitle: {
+        fontSize: 26,
+        lineHeight: 34,
+    },
+    backHeading: {
+        minHeight: 56,
     },
 });

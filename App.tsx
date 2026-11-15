@@ -9,6 +9,8 @@ import AddRecordScreen from './src/screens/AddRecord';
 import HistoryScreen from './src/screens/History';
 import DailyRecordScreen from './src/screens/DailyRecord';
 import EditRecordScreen from './src/screens/EditRecord';
+import GoalsScreen from './src/screens/Goals';
+import EditGoalsScreen from './src/screens/EditGoals';
 
 export type RootStackParamList = {
     Welcome: undefined;
@@ -17,6 +19,8 @@ export type RootStackParamList = {
     History: undefined;
     DailyRecord: { id: number };
     EditRecord: { id: number };
+    Goals: undefined;
+    EditGoals: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -56,6 +60,8 @@ export default function App() {
           <Stack.Screen name="History" component={HistoryScreen} />
           <Stack.Screen name="DailyRecord" component={DailyRecordScreen} />
           <Stack.Screen name="EditRecord" component={EditRecordScreen} />
+          <Stack.Screen name="Goals" component={GoalsScreen} />
+          <Stack.Screen name="EditGoals" component={EditGoalsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

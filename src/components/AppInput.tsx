@@ -13,8 +13,33 @@ type Props = {
     error?: string;
 };
 
-export default function AppInput({label,value,onChangeText,placeholder = '',keyboardType = 'default',autoCapitalize = 'none',editable = true,hint = '',error = '',
+export default function AppInput({
+    label,
+    value,
+    onChangeText,
+    placeholder = '',
+    keyboardType = 'default',
+    autoCapitalize = 'none',
+    editable = true,
+    hint = '',
+    error = '',
 }: Props) {
+    function changeText(text: string) {
+        if (keyboardType === 'number-pad') {
+            const number = text.split(',').join('');
+
+            for (let i = 0; i < number.length; i++) {
+                if (number[i] < '0' || number[i] > '9') {
+                    return;
+                }
+            }
+
+            onChangeText(number);
+        } else {
+            onChangeText(text);
+        }
+    }
+
     return (
         <View style={styles.container}>
             <View>
@@ -30,7 +55,8 @@ export default function AppInput({label,value,onChangeText,placeholder = '',keyb
                         error !== '' && styles.errorInput,
                     ]}
                     value={value}
-                    onChangeText={onChangeText}
+                    accessibilityLabel={label}
+                    onChangeText={changeText}
                     placeholder={placeholder}
                     placeholderTextColor="#697875"
                     keyboardType={keyboardType}
@@ -62,24 +88,28 @@ export default function AppInput({label,value,onChangeText,placeholder = '',keyb
 const styles = StyleSheet.create({
     container: {
         gap: 8,
+        minHeight: 84,
     },
     label: {
         color: '#172B28',
         fontSize: 14,
+        lineHeight: 20,
+        fontWeight: '500',
     },
     input: {
-        minHeight: 50,
+        minHeight: 52,
         backgroundColor: '#F3F7F5',
         borderColor: '#E3EAE7',
         borderWidth: 1,
         borderRadius: 12,
-        paddingHorizontal: 14,
+        paddingHorizontal: 16,
         paddingVertical: 12,
         color: '#172B28',
         fontSize: 16,
+        lineHeight: 22,
     },
     errorInput: {
-        borderColor: '#B42318',
+        borderColor: '#B93232',
     },
     hint: {
         color: '#697875',
@@ -87,7 +117,7 @@ const styles = StyleSheet.create({
         lineHeight: 18,
     },
     error: {
-        color: '#B42318',
+        color: '#B93232',
         fontSize: 12,
         lineHeight: 18,
     },

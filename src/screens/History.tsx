@@ -10,7 +10,7 @@ import DatePicker from '../components/DatePicker';
 import NavBar from '../components/NavBar';
 import PageHeader from '../components/PageHeader';
 import RecordCard from '../components/RecordCard';
-import { getHealthRecords } from '../features/health/healthService';
+import { getHealthRecords, getLocalDate } from '../features/health/healthService';
 import type { HealthRecord } from '../features/health/healthService';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'History'>;
@@ -26,12 +26,14 @@ function formatDate(date: string) {
 export default function History({ navigation }: Props) {
     const insets = useSafeAreaInsets();
     const focused = useIsFocused();
+    const today = getLocalDate();
 
     const [records, setRecords] = useState<HealthRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [filterDate, setFilterDate] = useState('');
     const [showDate, setShowDate] = useState(false);
+    const [retry, setRetry] = useState(0);
 
     const visibleRecords = filterDate
         ? records.filter((record) => record.date === filterDate)
@@ -70,7 +72,7 @@ export default function History({ navigation }: Props) {
         return () => {
             active = false;
         };
-    }, [focused]);
+    }, [focused, retry]);
 
     return (
         <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -98,24 +100,51 @@ export default function History({ navigation }: Props) {
                 />
 
                 {loading ? (
-                    <Text>Loading your records...</Text>
+                    <Text style={styles.count}>Loading your records...</Text>
                 ) : error !== '' ? (
-                    <Text style={styles.error}>{error}</Text>
+                    <View style={styles.record}>
+                        <Text style={styles.error}>{error}</Text>
+                        <AppButton title="Retry loading" onPress={() => setRetry(retry + 1)} />
+                    </View>
                 ) : visibleRecords.length === 0 ? (
-                    <Text>{filterDate ? 'No records for this date.' : 'No records yet.'}</Text>
+                    <Text style={styles.count}>{filterDate ? 'No records for this date.' : 'No records yet.'}</Text>
                 ) : (
-                    visibleRecords.map((record) => (
-                        <RecordCard
-                            key={record.id}
-                            date={formatDate(record.date)}
-                            steps={record.steps}
-                            calories={record.calories}
-                            water={record.water}
-                            onPress={() => navigation.navigate('DailyRecord', { id: record.id })}
-                        />
-                    ))
+                    visibleRecords.map((record, index) => {
+                        const day = new Date(`${record.date}T12:00:00`);
+                        const weekday = record.date === today
+                            ? 'Today'
+                            : day.toLocaleDateString('en-GB', { weekday: 'long' });
+                        const date = `${weekday} · ${day.toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'long',
+                        })}`;
+                        const showMonth = index === 0 ||
+                            record.date.slice(0, 7) !== visibleRecords[index - 1].date.slice(0, 7);
+
+                        return (
+                            <View key={record.id} style={styles.record}>
+                                {showMonth && (
+                                    <Text style={styles.month}>
+                                        {day.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+                                    </Text>
+                                )}
+                                <RecordCard
+                                    date={date}
+                                    steps={record.steps}
+                                    calories={record.calories}
+                                    water={record.water}
+                                    onPress={() => navigation.navigate('DailyRecord', { id: record.id })}
+                                />
+                            </View>
+                        );
+                    })
                 )}
 
+                {!loading && error === '' && (
+                    <Text style={styles.count}>
+                        {visibleRecords.length} {visibleRecords.length === 1 ? 'record' : 'records'} · Stored on this device
+                    </Text>
+                )}
                 {filterDate !== '' && (
                     <AppButton
                         title="Clear filter"
@@ -148,7 +177,7 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 20,
-        gap: 16,
+        gap: 20,
     },
     filter: {
         minHeight: 56,
@@ -171,5 +200,19 @@ const styles = StyleSheet.create({
     },
     error: {
         color: '#B42318',
+    },
+    record: {
+        gap: 20,
+    },
+    month: {
+        color: '#172B28',
+        fontSize: 18,
+        lineHeight: 25,
+        fontWeight: '600',
+    },
+    count: {
+        color: '#697875',
+        fontSize: 14,
+        lineHeight: 20,
     },
 });

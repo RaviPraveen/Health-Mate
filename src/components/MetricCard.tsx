@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { ReactNode } from 'react';
 
-type Props = {title: string;value: number; unit: string;message?: string; color: string; backgroundColor: string;  icon?: ReactNode;
+type Props = {title: string;value: number; unit: string;message?: string; color: string; backgroundColor: string; messageColor?: string; icon?: ReactNode;
 };
 
-export default function MetricCard({title,value,unit,message = '',color,backgroundColor, icon,
+export default function MetricCard({title,value,unit,message = '',color,backgroundColor,messageColor = color,icon,
 }: Props) {
     return (
         <View style={[styles.card, { backgroundColor }]}>
@@ -28,7 +28,7 @@ export default function MetricCard({title,value,unit,message = '',color,backgrou
 
             {message !== '' && (
                 <View>
-                    <Text style={[styles.message, { color }]}>
+                    <Text style={[styles.message, { color: messageColor }]}>
                         {message}
                     </Text>
                 </View>
@@ -41,17 +41,20 @@ const styles = StyleSheet.create({
     card: {
         flex: 1,
         minWidth: 120,
+        minHeight: 130,
         borderRadius: 20,
         padding: 16,
-        gap: 10,
+        gap: 8,
     },
     titleView: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 6,
+        gap: 8,
     },
     title: {
         fontSize: 13,
+        lineHeight: 18,
+        fontWeight: '500',
         flexShrink: 1,
     },
     valueView: {
@@ -62,13 +65,16 @@ const styles = StyleSheet.create({
     },
     value: {
         fontSize: 28,
+        lineHeight: 38,
         fontWeight: '600',
     },
     unit: {
         fontSize: 12,
+        lineHeight: 16,
     },
     message: {
-        fontSize: 12,
-        lineHeight: 18,
+        fontSize: 11,
+        lineHeight: 15,
+        fontWeight: '500',
     },
 });

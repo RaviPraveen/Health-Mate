@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     date: {
         color: '#172B28',
         fontSize: 16,
+        lineHeight: 22,
         fontWeight: '600',
     },
     values: {
@@ -57,6 +58,7 @@ const styles = StyleSheet.create({
     },
     value: {
         color: '#697875',
-        fontSize: 12,
+        fontSize: 14,
+        lineHeight: 20,
     },
 });

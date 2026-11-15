@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useFocusEffect, usePreventRemove } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,18 +12,24 @@ import ProgressCircle from '../components/ProgressCircle';
 import TopMessage from '../components/TopMessage';
 import { deleteHealthRecord, getHealthRecordById } from '../features/health/healthService';
 import type { HealthRecord } from '../features/health/healthService';
+import { getGoals } from '../features/health/goalService';
+import type { DailyGoals } from '../features/health/goalService';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'DailyRecord'>;
 
 export default function DailyRecord({ navigation, route }: Props) {
     const insets = useSafeAreaInsets();
+    const { width } = useWindowDimensions();
+    const circleSize = Math.min(104, (width - 56) / 3);
     const { id } = route.params;
     const [record, setRecord] = useState<HealthRecord | null>(null);
+    const [goals, setGoals] = useState<DailyGoals | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showConfirm, setShowConfirm] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [deleted, setDeleted] = useState(false);
+    const [retry, setRetry] = useState(0);
 
     usePreventRemove(deleting, () => {});
 
@@ -35,8 +41,10 @@ export default function DailyRecord({ navigation, route }: Props) {
         async function loadRecord() {
             try {
                 const savedRecord = await getHealthRecordById(id);
+                const savedGoals = await getGoals();
                 if (active) {
                     setRecord(savedRecord);
+                    setGoals(savedGoals);
                 }
             } catch {
                 if (active) {
@@ -55,7 +63,7 @@ export default function DailyRecord({ navigation, route }: Props) {
         return () => {
             active = false;
         };
-    }, [id]));
+    }, [id, retry]));
 
     async function confirmDelete() {
         if (!record || deleting || deleted) {
@@ -86,14 +94,21 @@ export default function DailyRecord({ navigation, route }: Props) {
         : '';
 
     return (
-        <View style={[styles.container, { paddingTop: insets.top + 16 }]}>
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={[
+                styles.content,
+                { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 20 },
+            ]}>
             <PageHeader title="Daily record" onBack={() => navigation.goBack()} />
 
             {error !== '' && <Text style={styles.error}>{error}</Text>}
+            {error !== '' && !record && (
+                <AppButton title="Retry loading" onPress={() => setRetry(retry + 1)} />
+            )}
 
             {loading ? (
-                <Text>Loading record...</Text>
-            ) : record ? (
+                <Text style={styles.date}>Loading record...</Text>
+            ) : record && goals ? (
                 <>
                     <Text style={styles.date}>{dateText}</Text>
 
@@ -101,8 +116,8 @@ export default function DailyRecord({ navigation, route }: Props) {
                         <View style={styles.metric}>
                             <ProgressCircle
                                 value={record.steps}
-                                goal={10000}
-                                size={84}
+                                goal={goals.steps}
+                                size={circleSize}
                                 showValue
                                 label="Steps"
                                 unit="steps"
@@ -115,8 +130,8 @@ export default function DailyRecord({ navigation, route }: Props) {
                         <View style={styles.metric}>
                             <ProgressCircle
                                 value={record.calories}
-                                goal={500}
-                                size={84}
+                                goal={goals.calories}
+                                size={circleSize}
                                 showValue
                                 label="Calories"
                                 unit="kcal"
@@ -129,8 +144,8 @@ export default function DailyRecord({ navigation, route }: Props) {
                         <View style={styles.metric}>
                             <ProgressCircle
                                 value={record.water}
-                                goal={2500}
-                                size={84}
+                                goal={goals.water}
+                                size={circleSize}
                                 showValue
                                 label="Water"
                                 unit="ml"
@@ -141,6 +156,10 @@ export default function DailyRecord({ navigation, route }: Props) {
                         </View>
                     </View>
 
+                    <Text style={styles.date}>
+                        Progress uses your current daily goals.
+                    </Text>
+
                     <View style={styles.buttons}>
                         <AppButton
                             title="Edit record"
@@ -149,15 +168,23 @@ export default function DailyRecord({ navigation, route }: Props) {
                         />
                         <AppButton
                             title={deleting ? 'Deleting...' : 'Delete record'}
-                            variant="text"
+                            variant="redText"
                             onPress={() => setShowConfirm(true)}
                             disabled={deleting || deleted}
                         />
                     </View>
                 </>
             ) : error === '' && (
-                <Text>This record could not be found.</Text>
+                record ? (
+                    <AppButton
+                        title="Set daily goals"
+                        onPress={() => navigation.navigate('Goals')}
+                    />
+                ) : (
+                    <Text style={styles.date}>This record could not be found.</Text>
+                )
             )}
+            </ScrollView>
 
             <ConfirmBox
                 visible={showConfirm}
@@ -179,12 +206,15 @@ const styles = StyleSheet.create({
     container: {
         flex:1,
         backgroundColor:'#FFFFFF',
+    },
+    content: {
         paddingHorizontal:20,
-        gap:24,
+        gap:20,
     },
     date: {
         color:'#697875',
         fontSize:14,
+        lineHeight:20,
     },
     error: {
         color:'#B42318',
@@ -193,12 +223,14 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         justifyContent:'space-between',
         gap: 8,
+        marginTop:28,
+        marginBottom:28,
     },
     metric: {
         flex:1,
         alignItems:'center',
     },
     buttons: {
-        gap:8,
+        gap:20,
     },
 });

@@ -20,7 +20,6 @@ function checkDate(date: string) {
     const day = new Date(`${date}T12:00:00`);
 
     if (
-        !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
         Number.isNaN(day.getTime()) ||
         getLocalDate(day) !== date
     ) {
@@ -28,19 +27,44 @@ function checkDate(date: string) {
     }
 }
 
-function readNumber(value: string, label: string) {
-    const text = value.replace(/,/g, '').trim();
-    const number = Number(text);
+function getNumberError(value: string, label: string) {
+    const text = value.split(',').join('').trim();
 
-    if (
-        !/^\d+$/.test(text) ||
-        !Number.isSafeInteger(number) ||
-        number < 0
-    ) {
-        throw new Error(`${label} must be a whole number, zero or greater.`);
+    if (text === '') {
+        return `Enter ${label.toLowerCase()}.`;
     }
 
-    return number;
+    for (let i = 0; i < text.length; i++) {
+        if (text[i] < '0' || text[i] > '9') {
+            return `${label} must contain numbers only.`;
+        }
+    }
+
+    const number = Number(text);
+
+    if (!Number.isSafeInteger(number) || number < 0) {
+        return `${label} must be a whole number, zero or greater.`;
+    }
+
+    return '';
+}
+
+export function getHealthRecordErrors(steps: string, calories: string, water: string) {
+    return {
+        steps: getNumberError(steps, 'Steps'),
+        calories: getNumberError(calories, 'Calories'),
+        water: getNumberError(water, 'Water'),
+    };
+}
+
+function readNumber(value: string, label: string) {
+    const error = getNumberError(value, label);
+
+    if (error !== '') {
+        throw new Error(error);
+    }
+
+    return Number(value.split(',').join('').trim());
 }
 
 export async function getHealthRecord(date: string) {

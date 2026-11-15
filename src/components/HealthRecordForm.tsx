@@ -100,28 +100,32 @@ const styles = StyleSheet.create({
     },
     dateView: {
         gap:8,
+        minHeight:84,
     },
     label: {
         color:'#172B28',
         fontSize:14,
+        lineHeight:20,
+        fontWeight:'500',
     },
     dateInput: {
-        minHeight: 50,
+        minHeight:52,
         backgroundColor:'#F3F7F5',
         borderColor:'#E3EAE7',
         borderWidth:1,
         borderRadius:12,
-        paddingHorizontal:14,
+        paddingHorizontal:16,
         paddingVertical:12,
         justifyContent:'center',
     },
     dateText: {
         color:'#172B28',
         fontSize:16,
+        lineHeight:22,
     },
     hint: {
         color:'#697875',
-        fontSize:12,
-        lineHeight:18,
+        fontSize:14,
+        lineHeight:20,
     },
 });

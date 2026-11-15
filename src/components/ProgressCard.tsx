@@ -23,7 +23,7 @@ export default function ProgressCard({ steps, goal, date,
 
             <View style={styles.cardtext2}>
                 <View style={styles.stepsNumber}>
-                    <Text style={styles.steps}>
+                    <Text style={styles.steps} numberOfLines={1} adjustsFontSizeToFit>
                         {steps.toLocaleString('en-US')}
                     </Text>
 
@@ -36,6 +36,7 @@ export default function ProgressCard({ steps, goal, date,
                     <ProgressCircle
                         value={steps}
                         goal={goal}
+                        size={100}
                     />
                 </View>
             </View>
@@ -56,9 +57,10 @@ export default function ProgressCard({ steps, goal, date,
 const styles = StyleSheet.create({
     prograsscard: {
         backgroundColor: '#123E35',
+        minHeight: 232,
         borderRadius: 24,
         padding: 20,
-        gap: 20,
+        gap: 16,
     },
     cardtext1: {
         flexDirection: 'row',
@@ -68,12 +70,14 @@ const styles = StyleSheet.create({
     },
     DailyMovement: {
         color: '#DAF3A0',
-        fontSize: 12,
+        fontSize: 11,
+        lineHeight: 15,
         fontWeight: '600',
     },
     date: {
-        color: '#DAF3A0',
-        fontSize: 12,
+        color: '#FFFFFF',
+        fontSize: 11,
+        lineHeight: 15,
     },
     cardtext2: {
         flexDirection: 'row',
@@ -89,11 +93,13 @@ const styles = StyleSheet.create({
     steps: {
         color: '#FFFFFF',
         fontSize: 44,
+        lineHeight: 59,
         fontWeight: '600',
     },
     target: {
         color: '#FFFFFF',
         fontSize: 13,
+        lineHeight: 18,
         marginTop: 4,
     },
     stautsCircle: {
@@ -102,6 +108,6 @@ const styles = StyleSheet.create({
     cardmessage: {
         color: '#FFFFFF',
         fontSize: 12,
-        lineHeight: 18,
+        lineHeight: 16,
     },
 });
