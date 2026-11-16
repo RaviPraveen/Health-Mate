@@ -1,16 +1,17 @@
 import * as SQLite from 'expo-sqlite';
 
-let database: Promise<SQLite.SQLiteDatabase> | null = null;
+
+let databaseSetup: Promise<SQLite.SQLiteDatabase> | null = null;
 
 export function setupDatabase() {
-    if (!database) {
-        database = createDatabase().catch((error) => {
-            database = null;
+    if (databaseSetup === null) {
+        databaseSetup = createDatabase().catch((error) => {
+            databaseSetup = null;
             throw error;
         });
     }
 
-    return database;
+    return databaseSetup;
 }
 
 async function createDatabase() {
