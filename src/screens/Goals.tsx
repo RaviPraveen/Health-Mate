@@ -83,7 +83,6 @@ export default function Goals({ navigation }: Props) {
                     label="Steps"
                     value={steps}
                     onChangeText={setSteps}
-                    keyboardType="number-pad"
                     placeholder="Enter daily steps"
                     editable={!saving && message === ''}
                     error={showErrors ? errors.steps : ''}
@@ -92,7 +91,6 @@ export default function Goals({ navigation }: Props) {
                     label="Calories (kcal)"
                     value={calories}
                     onChangeText={setCalories}
-                    keyboardType="number-pad"
                     placeholder="Enter daily calories"
                     editable={!saving && message === ''}
                     error={showErrors ? errors.calories : ''}
@@ -101,7 +99,6 @@ export default function Goals({ navigation }: Props) {
                     label="Water (ml)"
                     value={water}
                     onChangeText={setWater}
-                    keyboardType="number-pad"
                     placeholder="Enter daily water intake"
                     editable={!saving && message === ''}
                     error={showErrors ? errors.water : ''}

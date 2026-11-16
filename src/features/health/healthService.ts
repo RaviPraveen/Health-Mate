@@ -28,22 +28,35 @@ function checkDate(date: string) {
 }
 
 function getNumberError(value: string, label: string) {
-    const text = value.split(',').join('').trim();
+    const text = value.trim();
 
     if (text === '') {
         return `Enter ${label.toLowerCase()}.`;
     }
 
-    for (let i = 0; i < text.length; i++) {
-        if (text[i] < '0' || text[i] > '9') {
+    const numberText = text.split(',').join('');
+    const number = Number(numberText);
+
+    if (numberText === '' || !Number.isFinite(number)) {
+        return `${label} must contain numbers only.`;
+    }
+
+    if (number < 0) {
+        return `${label} must be zero or greater.`;
+    }
+
+    if (!Number.isSafeInteger(number) || numberText.includes('.')) {
+        return `${label} must be a whole number.`;
+    }
+
+    for (let i = 0; i < numberText.length; i++) {
+        if (numberText[i] < '0' || numberText[i] > '9') {
             return `${label} must contain numbers only.`;
         }
     }
 
-    const number = Number(text);
-
-    if (!Number.isSafeInteger(number) || number < 0) {
-        return `${label} must be a whole number, zero or greater.`;
+    if (text.includes(',') && text !== number.toLocaleString('en-US')) {
+        return `${label} must be a valid whole number.`;
     }
 
     return '';

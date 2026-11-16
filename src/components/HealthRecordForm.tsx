@@ -57,7 +57,6 @@ export default function HealthRecordForm({
                     label="Steps walked"
                     value={steps}
                     onChangeText={onStepsChange}
-                    keyboardType="number-pad"
                     placeholder="Enter steps"
                     error={stepsError}
                 />
@@ -68,7 +67,6 @@ export default function HealthRecordForm({
                     label="Calories burned (kcal)"
                     value={calories}
                     onChangeText={onCaloriesChange}
-                    keyboardType="number-pad"
                     placeholder="Enter calories"
                     error={caloriesError}
                 />
@@ -79,7 +77,6 @@ export default function HealthRecordForm({
                     label="Water intake (ml)"
                     value={water}
                     onChangeText={onWaterChange}
-                    keyboardType="number-pad"
                     placeholder="Enter water intake"
                     error={waterError}
                 />

@@ -24,22 +24,6 @@ export default function AppInput({
     hint = '',
     error = '',
 }: Props) {
-    function changeText(text: string) {
-        if (keyboardType === 'number-pad') {
-            const number = text.split(',').join('');
-
-            for (let i = 0; i < number.length; i++) {
-                if (number[i] < '0' || number[i] > '9') {
-                    return;
-                }
-            }
-
-            onChangeText(number);
-        } else {
-            onChangeText(text);
-        }
-    }
-
     return (
         <View style={styles.container}>
             <View>
@@ -56,7 +40,7 @@ export default function AppInput({
                     ]}
                     value={value}
                     accessibilityLabel={label}
-                    onChangeText={changeText}
+                    onChangeText={onChangeText}
                     placeholder={placeholder}
                     placeholderTextColor="#697875"
                     keyboardType={keyboardType}

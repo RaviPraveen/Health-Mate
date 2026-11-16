@@ -39,6 +39,15 @@ export default function History({ navigation }: Props) {
         ? records.filter((record) => record.date === filterDate)
         : records;
     const filterLabel = filterDate ? formatDate(filterDate) : 'All';
+    const emptyHistory = !loading && error === '' && records.length === 0;
+
+    let description = 'A daily record of your progress.';
+
+    if (emptyHistory) {
+        description = 'Your daily progress starts with one record.';
+    } else if (filterDate !== '') {
+        description = `Records for ${filterLabel}`;
+    }
 
     useEffect(() => {
         if (!focused) {
@@ -76,81 +85,113 @@ export default function History({ navigation }: Props) {
 
     return (
         <View style={[styles.container, { paddingTop: insets.top }]}>
-            <ScrollView contentContainerStyle={styles.content}>
+            <ScrollView
+                style={styles.scroll}
+                contentContainerStyle={[styles.content, emptyHistory && styles.emptyContent]}
+            >
                 <PageHeader
                     title="Your history"
-                    description={filterDate
-                        ? `Records for ${filterLabel}`
-                        : 'A daily record of your progress.'}
+                    description={description}
                 />
 
-                <Pressable
-                    style={styles.filter}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Filter history by date, ${filterLabel}`}
-                    onPress={() => setShowDate(true)}
-                >
-                    <Text style={styles.filterLabel}>{filterLabel}</Text>
-                    <Image source={require('../../assets/Filter.png')} style={styles.filterIcon} />
-                </Pressable>
+                {emptyHistory ? (
+                    <View style={styles.emptyState}>
+                        <View style={styles.emptyMessage}>
+                            <Image
+                                source={require('../../assets/History.png')}
+                                style={styles.emptyIcon}
+                            />
+                            <Text style={styles.emptyTitle}>No records yet</Text>
+                            <Text style={styles.emptyDescription}>
+                                Add your first record to see your progress.
+                            </Text>
+                        </View>
 
-                <AppButton
-                    title="Add health record"
-                    onPress={() => navigation.navigate('AddRecord')}
-                />
-
-                {loading ? (
-                    <Text style={styles.count}>Loading your records...</Text>
-                ) : error !== '' ? (
-                    <View style={styles.record}>
-                        <Text style={styles.error}>{error}</Text>
-                        <AppButton title="Retry loading" onPress={() => setRetry(retry + 1)} />
+                        <View style={styles.emptyActions}>
+                            <AppButton
+                                title="Add your first record"
+                                onPress={() => {
+                                    setFilterDate('');
+                                    setShowDate(false);
+                                    navigation.navigate('AddRecord');
+                                }}
+                            />
+                            <Text style={styles.emptyNote}>
+                                Saved records will appear here, organised by date.
+                            </Text>
+                        </View>
                     </View>
-                ) : visibleRecords.length === 0 ? (
-                    <Text style={styles.count}>{filterDate ? 'No records for this date.' : 'No records yet.'}</Text>
                 ) : (
-                    visibleRecords.map((record, index) => {
-                        const day = new Date(`${record.date}T12:00:00`);
-                        const weekday = record.date === today
-                            ? 'Today'
-                            : day.toLocaleDateString('en-GB', { weekday: 'long' });
-                        const date = `${weekday} · ${day.toLocaleDateString('en-GB', {
-                            day: 'numeric',
-                            month: 'long',
-                        })}`;
-                        const showMonth = index === 0 ||
-                            record.date.slice(0, 7) !== visibleRecords[index - 1].date.slice(0, 7);
+                    <>
+                        <Pressable
+                            style={styles.filter}
+                            accessibilityRole="button"
+                            accessibilityLabel={`Filter history by date, ${filterLabel}`}
+                            onPress={() => setShowDate(true)}
+                        >
+                            <Text style={styles.filterLabel}>{filterLabel}</Text>
+                            <Image source={require('../../assets/Filter.png')} style={styles.filterIcon} />
+                        </Pressable>
 
-                        return (
-                            <View key={record.id} style={styles.record}>
-                                {showMonth && (
-                                    <Text style={styles.month}>
-                                        {day.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
-                                    </Text>
-                                )}
-                                <RecordCard
-                                    date={date}
-                                    steps={record.steps}
-                                    calories={record.calories}
-                                    water={record.water}
-                                    onPress={() => navigation.navigate('DailyRecord', { id: record.id })}
-                                />
+                        <AppButton
+                            title="Add health record"
+                            onPress={() => navigation.navigate('AddRecord')}
+                        />
+
+                        {loading ? (
+                            <Text style={styles.count}>Loading your records...</Text>
+                        ) : error !== '' ? (
+                            <View style={styles.record}>
+                                <Text style={styles.error}>{error}</Text>
+                                <AppButton title="Retry loading" onPress={() => setRetry(retry + 1)} />
                             </View>
-                        );
-                    })
-                )}
+                        ) : visibleRecords.length === 0 ? (
+                            <Text style={styles.count}>No records for this date.</Text>
+                        ) : (
+                            visibleRecords.map((record, index) => {
+                                const day = new Date(`${record.date}T12:00:00`);
+                                const weekday = record.date === today
+                                    ? 'Today'
+                                    : day.toLocaleDateString('en-GB', { weekday: 'long' });
+                                const date = `${weekday} · ${day.toLocaleDateString('en-GB', {
+                                    day: 'numeric',
+                                    month: 'long',
+                                })}`;
+                                const showMonth = index === 0 ||
+                                    record.date.slice(0, 7) !== visibleRecords[index - 1].date.slice(0, 7);
 
-                {!loading && error === '' && (
-                    <Text style={styles.count}>
-                        {visibleRecords.length} {visibleRecords.length === 1 ? 'record' : 'records'} · Stored on this device
-                    </Text>
-                )}
-                {filterDate !== '' && (
-                    <AppButton
-                        title="Clear filter"
-                        variant="text"
-                        onPress={() => setFilterDate('')}
-                    />
+                                return (
+                                    <View key={record.id} style={styles.record}>
+                                        {showMonth && (
+                                            <Text style={styles.month}>
+                                                {day.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+                                            </Text>
+                                        )}
+                                        <RecordCard
+                                            date={date}
+                                            steps={record.steps}
+                                            calories={record.calories}
+                                            water={record.water}
+                                            onPress={() => navigation.navigate('DailyRecord', { id: record.id })}
+                                        />
+                                    </View>
+                                );
+                            })
+                        )}
+
+                        {!loading && error === '' && (
+                            <Text style={styles.count}>
+                                {visibleRecords.length} {visibleRecords.length === 1 ? 'record' : 'records'} · Stored on this device
+                            </Text>
+                        )}
+                        {filterDate !== '' && (
+                            <AppButton
+                                title="Clear filter"
+                                variant="text"
+                                onPress={() => setFilterDate('')}
+                            />
+                        )}
+                    </>
                 )}
             </ScrollView>
 
@@ -160,7 +201,7 @@ export default function History({ navigation }: Props) {
             />
 
             <DatePicker
-                visible={showDate}
+                visible={showDate && !emptyHistory}
                 value={filterDate}
                 onSelect={setFilterDate}
                 onClear={() => setFilterDate('')}
@@ -175,9 +216,51 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FFFFFF',
     },
+    scroll: {
+        flex: 1,
+    },
     content: {
         padding: 20,
         gap: 20,
+    },
+    emptyContent: {
+        flexGrow: 1,
+    },
+    emptyState: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        paddingVertical: 24,
+    },
+    emptyMessage: {
+        alignItems: 'center',
+        gap: 16,
+    },
+    emptyIcon: {
+        width: 24,
+        height: 24,
+        resizeMode: 'contain',
+    },
+    emptyTitle: {
+        color: '#172B28',
+        fontSize: 20,
+        lineHeight: 28,
+        fontWeight: '600',
+        textAlign: 'center',
+    },
+    emptyDescription: {
+        color: '#697875',
+        fontSize: 14,
+        lineHeight: 22,
+        textAlign: 'center',
+    },
+    emptyActions: {
+        marginTop: 80,
+        gap: 20,
+    },
+    emptyNote: {
+        color: '#697875',
+        fontSize: 13,
+        lineHeight: 20,
     },
     filter: {
         minHeight: 56,
