@@ -45,9 +45,9 @@ export default function EditGoals({ navigation }: Props) {
                         return;
                     }
 
-                    setSteps(goals.steps.toLocaleString('en-US'));
-                    setCalories(goals.calories.toLocaleString('en-US'));
-                    setWater(goals.water.toLocaleString('en-US'));
+                    setSteps(goals.steps.toString());
+                    setCalories(goals.calories.toString());
+                    setWater(goals.water.toString());
                     setLoaded(true);
                 }
             } catch {
