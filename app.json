@@ -16,7 +16,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.ravipraveen.Health_Mate"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -24,6 +25,11 @@
     "plugins": [
       "expo-sqlite",
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4eef8970-4db8-4954-b99c-d9e05bee7e29"
+      }
+    }
   }
 }
