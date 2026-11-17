@@ -4,10 +4,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Props = {
     message: string; type?: 'success' | 'error';  onFinish: () => void;
+    autoHide?: boolean;
+    inline?: boolean;
 };
 
 export default function TopMessage({
-    message,  type = 'success', onFinish,
+    message,  type = 'success', onFinish, autoHide = true, inline = false,
 }: Props) {
     const insets = useSafeAreaInsets();
     const finish = useRef(onFinish);
@@ -17,7 +19,7 @@ export default function TopMessage({
     }, [onFinish]);
 
     useEffect(() => {
-        if (message === '') {
+        if (message === '' || !autoHide) {
             return;
         }
 
@@ -26,7 +28,7 @@ export default function TopMessage({
         }, 2000);
 
         return () => clearTimeout(timer);
-    }, [message]);
+    }, [message, autoHide]);
 
     if (message === '') {
         return null;
@@ -38,9 +40,10 @@ export default function TopMessage({
             style={[
                 styles.messageBox,
                 { top: insets.top + 8 },
+                inline && styles.inlineBox,
                 type === 'error' && styles.errorBox,
             ]}
-            accessibilityLiveRegion="polite"
+            accessibilityLiveRegion={type === 'error' ? 'assertive' : 'polite'}
         >
             <Text style={styles.message}>
                 {message}
@@ -62,7 +65,14 @@ const styles = StyleSheet.create({
         elevation: 8,
     },
     errorBox: {
-        backgroundColor: '#B42318',
+        backgroundColor: '#B93232',
+    },
+    inlineBox: {
+        position: 'relative',
+        top: 0,
+        left: 0,
+        right: 0,
+        elevation: 0,
     },
     message: {
         color: '#FFFFFF',

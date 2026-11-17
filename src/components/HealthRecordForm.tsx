@@ -13,6 +13,7 @@ type Props = {
     stepsError?: string;
     caloriesError?: string;
     waterError?: string;
+    showHint?: boolean;
 };
 
 export default function HealthRecordForm({
@@ -27,6 +28,7 @@ export default function HealthRecordForm({
     stepsError = '',
     caloriesError = '',
     waterError = '',
+    showHint = true,
 }: Props) {
     const dateText = <Text style={styles.dateText}>{date}</Text>;
 
@@ -82,11 +84,13 @@ export default function HealthRecordForm({
                 />
             </View>
 
-            <View>
-                <Text style={styles.hint}>
-                    Saving an existing date updates that day’s record.
-                </Text>
-            </View>
+            {showHint && (
+                <View>
+                    <Text style={styles.hint}>
+                        Saving an existing date updates that day’s record.
+                    </Text>
+                </View>
+            )}
         </View>
     );
 }

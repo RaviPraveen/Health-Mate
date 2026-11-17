@@ -32,6 +32,7 @@ export default function AddRecord({ navigation }: Props) {
     const [loading, setLoading] = useState(true);
     const [loaded, setLoaded] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [saveFailed, setSaveFailed] = useState(false);
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const [retry, setRetry] = useState(0);
@@ -47,6 +48,7 @@ export default function AddRecord({ navigation }: Props) {
         setLoading(true);
         setLoaded(false);
         setError('');
+        setSaveFailed(false);
         setShowErrors(false);
 
         async function loadRecord() {
@@ -83,6 +85,7 @@ export default function AddRecord({ navigation }: Props) {
         }
 
         setError('');
+        setSaveFailed(false);
         Keyboard.dismiss();
         setShowErrors(true);
 
@@ -95,12 +98,8 @@ export default function AddRecord({ navigation }: Props) {
         try {
             await saveHealthRecord(date, steps, calories, water);
             setMessage('Record saved');
-        } catch (error) {
-            setError(
-                error instanceof Error
-                    ? error.message
-                    : 'Could not save your record. Please try again.'
-            );
+        } catch {
+            setSaveFailed(true);
         } finally {
             setSaving(false);
         }
@@ -115,22 +114,52 @@ export default function AddRecord({ navigation }: Props) {
         }
     );
 
+    let saveTitle = 'Save record';
+
+    if (loading) {
+        saveTitle = 'Loading...';
+    } else if (saving) {
+        saveTitle = 'Saving...';
+    } else if (saveFailed) {
+        saveTitle = 'Retry save';
+    }
+
+    let description = 'One record per day. All values are daily totals.';
+    let topPadding = insets.top + 16;
+
+    if (saveFailed) {
+        description = 'Your entries are still here.';
+        topPadding = 20;
+    }
+
     return (
         <KeyboardAvoidingView
             style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
+            {saveFailed && (
+                <View style={[styles.errorBanner, { paddingTop: insets.top + 16 }]}>
+                    <TopMessage
+                        message="Record wasn't saved. Please try again."
+                        type="error"
+                        autoHide={false}
+                        inline
+                        onFinish={() => setSaveFailed(false)}
+                    />
+                </View>
+            )}
+
             <ScrollView
                 contentContainerStyle={[
                     styles.content,
-                    { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 20 },
+                    { paddingTop: topPadding, paddingBottom: insets.bottom + 20 },
                 ]}
                 keyboardShouldPersistTaps="handled"
             >
                 <View>
                     <PageHeader
                         title="Add health record"
-                        description="One record per day. All values are daily totals."
+                        description={description}
                         onBack={() => navigation.goBack()}
                     />
                 </View>
@@ -175,19 +204,14 @@ export default function AddRecord({ navigation }: Props) {
                         stepsError={showErrors ? errors.steps : ''}
                         caloriesError={showErrors ? errors.calories : ''}
                         waterError={showErrors ? errors.water : ''}
+                        showHint={!saveFailed}
                     />
                 </View>
 
                 <View style={styles.buttonsView}>
                     <View>
                         <AppButton
-                            title={
-                                loading
-                                    ? 'Loading...'
-                                    : saving
-                                        ? 'Saving...'
-                                        : 'Save record'
-                            }
+                            title={saveTitle}
                             onPress={saveRecord}
                             disabled={
                                 !loaded || loading || saving || message !== '' || (showErrors && invalid)
@@ -197,9 +221,15 @@ export default function AddRecord({ navigation }: Props) {
 
                     <View>
                         <AppButton
-                            title="Cancel"
-                            variant="redText"
-                            onPress={() => navigation.goBack()}
+                            title={saveFailed ? 'Keep editing' : 'Cancel'}
+                            variant={saveFailed ? 'text' : 'redText'}
+                            onPress={() => {
+                                if (saveFailed) {
+                                    setSaveFailed(false);
+                                } else {
+                                    navigation.goBack();
+                                }
+                            }}
                             disabled={saving || message !== ''}
                         />
                     </View>
@@ -232,6 +262,9 @@ const styles = StyleSheet.create({
     content: {
         paddingHorizontal: 20,
         gap: 20,
+    },
+    errorBanner: {
+        paddingHorizontal: 20,
     },
     buttonsView: {
         gap: 8,
